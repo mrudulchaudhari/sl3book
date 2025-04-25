@@ -1,0 +1,70 @@
+{% extends 'store/base.html' %}
+
+{% block title %}Register - Bookstore{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center mt-4">
+    <div class="col-md-8 col-lg-6">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h2 class="card-title text-center mb-4">Create Your Account</h2>
+
+                <form method="post" action="{% url 'store:register' %}" novalidate> 
+                    {% csrf_token %} 
+
+                    <div class="mb-3">
+                        <label for="username" class="form-label">Username <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="username" name="username" value="{{ username|default:'' }}" required aria-describedby="usernameHelp">
+                         <div id="usernameHelp" class="form-text">Choose a unique username.</div>
+                         {% if error_username_taken %}
+                             <div class="text-danger small mt-1">{{ error_username_taken }}</div>
+                         {% endif %} se
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email Address</label>
+                        <input type="email" class="form-control" id="email" name="email" value="{{ email|default:'' }}" aria-describedby="emailHelp">
+                        <div id="emailHelp" class="form-text">Optional, but useful for account recovery. We'll never share your email.</div>
+                         {% if error_email_invalid %}
+                             <div class="text-danger small mt-1">{{ error_email_invalid }}</div>
+                         {% endif %}
+                         {% if error_email_taken %}
+                             <div class="text-danger small mt-1">{{ error_email_taken }}</div>
+                         {% endif %}
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Password <span class="text-danger">*</span></label>
+                        <input type="password" class="form-control" id="password" name="password" required aria-describedby="passwordHelpBlock">
+                         <div id="passwordHelpBlock" class="form-text">
+                            Choose a strong password.
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="password_confirm" class="form-label">Confirm Password <span class="text-danger">*</span></label>
+                        <input type="password" class="form-control" id="password_confirm" name="password_confirm" required>
+                         {% if error_passwords_mismatch %}
+                             <div class="text-danger small mt-1">{{ error_passwords_mismatch }}</div>
+                         {% endif %}
+                    </div>
+
+                     {% if error_general %}
+                         <div class="alert alert-danger">{{ error_general }}</div>
+                     {% endif %}
+
+                    <div class="d-grid">
+                         <button type="submit" class="btn btn-primary btn-lg">Register</button>
+                    </div>
+                </form>
+                <p class="mt-4 text-center">
+                    Already have an account? <a href="{% url 'store:login' %}">Login here</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+{% endblock %}

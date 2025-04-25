@@ -1,0 +1,37 @@
+{% extends 'store/base.html' %}
+
+{% block title %}Login - Bookstore{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center mt-4">
+    <div class="col-md-6 col-lg-5">
+         <div class="card shadow-sm">
+            <div class="card-body">
+                <h2 class="card-title text-center mb-4">Login</h2>
+
+                <form method="post" action="{% url 'store:login' %}{% if request.GET.next %}?next={{ request.GET.next|urlencode }}{% endif %}"> {# Include next parameter securely #}
+                    {% csrf_token %}
+
+                    <div class="mb-3">
+                        <label for="username" class="form-label">Username</label>
+                        <input type="text" class="form-control" id="username" name="username" value="{{ username|default:'' }}" required autofocus> {# autofocus for usability #}
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Password</label>
+                        <input type="password" class="form-control" id="password" name="password" required>
+                    </div>
+
+                     <div class="d-grid">
+                        <button type="submit" class="btn btn-primary btn-lg">Login</button>
+                    </div>
+                </form>
+
+                <p class="mt-4 text-center">
+                    Don't have an account? <a href="{% url 'store:register' %}">Register here</a>
+                </p>
+                 </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

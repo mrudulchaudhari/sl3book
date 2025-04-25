@@ -1,0 +1,106 @@
+{% extends 'store/base.html' %}
+{% load static %}
+
+{% block title %}Your Shopping Cart{% endblock %}
+
+{% block content %}
+<h1 class="mt-4 mb-4">Your Shopping Cart</h1>
+
+{% if not cart_items %}
+    <div class="alert alert-info" role="alert">
+        Your cart is currently empty. <a href="{% url 'store:book_list' %}" class="alert-link">Continue shopping?</a>
+    </div>
+{% else %}
+    <div class="table-responsive">
+        <table class="table table-hover align-middle">
+            <thead>
+                <tr>
+                    <th scope="col" style="width: 10%;">Item</th>
+                    <th scope="col" style="width: 40%;"></th>
+                    <th scope="col" class="text-center" style="width: 20%;">Quantity</th> 
+                    <th scope="col" class="text-end" style="width: 15%;">Unit Price</th>
+                    <th scope="col" class="text-end" style="width: 15%;">Subtotal</th>
+                    <th scope="col" class="text-center" style="width: 5%;"></th> 
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in cart_items %}
+                <tr>
+                    <td>
+                        <a href="{% url 'store:book_detail' item.book.id %}">
+                             {% if item.book.cover_image and item.book.cover_image.url %}
+                                <img src="{{ item.book.cover_image.url }}" alt="{{ item.book.title }}" class="img-thumbnail" style="max-width: 75px; height: auto;">
+                             {% else %}
+                                <img src="{% static 'images/placeholder_cover.png' %}" alt="{{ item.book.title }}" class="img-thumbnail" style="max-width: 75px; height: auto;">
+                             {% endif %}
+                        </a>
+                    </td>
+                    <td>
+                        <a href="{% url 'store:book_detail' item.book.id %}" class="text-decoration-none text-dark fw-bold">{{ item.book.title }}</a>
+                        <br>
+                        <small class="text-muted">By {{ item.book.author }}</small>
+                    </td>
+                    
+                    <td class="text-center">
+                        <form action="{% url 'store:update_cart_item' %}" method="post" class="d-inline-flex align-items-center justify-content-center">
+                            {% csrf_token %}
+                            <input type="hidden" name="book_id" value="{{ item.book.id }}">
+                            <input type="number"
+                                   name="quantity"
+                                   value="{{ item.quantity }}"
+                                   min="0" 
+                                   max="{{ item.book.stock }}"
+                                   class="form-control form-control-sm me-2"
+                                   style="width: 70px;"
+                                   aria-label="Quantity for {{ item.book.title }}">
+                            <button type="submit" class="btn btn-sm btn-outline-secondary" title="Update quantity">
+                                <span data-feather="refresh-cw" class="feather"></span>
+                            </button>
+                        </form>
+                    </td>
+
+                    <td class="text-end">${{ item.book.price|floatformat:2 }}</td>
+                    <td class="text-end fw-bold">${{ item.subtotal|floatformat:2 }}</td>
+                    <td class="text-center">
+                        
+                         <form action="{% url 'store:remove_cart_item' %}" method="post">
+                            {% csrf_token %}
+                            <input type="hidden" name="book_id" value="{{ item.book.id }}">
+                            <button type="submit" class="btn btn-sm btn-outline-danger border-0" title="Remove item">
+                                <span data-feather="x-circle" class="feather"></span>
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+            <tfoot>
+                <tr>
+                     
+                    <td colspan="4" class="text-end fw-bold fs-5 align-middle">Total:</td>
+                    <td class="text-end fw-bold fs-5 align-middle">${{ total_cart_price|floatformat:2 }}</td>
+                    <td></td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+
+    <div class="d-flex justify-content-between mt-4">
+        <a href="{% url 'store:book_list' %}" class="btn btn-outline-secondary">
+             <span data-feather="arrow-left" class="feather align-text-bottom"></span>
+             Continue Shopping
+        </a>
+        <a href="#" class="btn btn-primary btn-lg">
+            Proceed to Checkout
+            <span data-feather="arrow-right" class="feather align-text-bottom"></span>
+        </a>
+    </div>
+
+{% endif %}
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+<script> try { feather.replace() } catch(e) {} </script>
+{% endblock %}

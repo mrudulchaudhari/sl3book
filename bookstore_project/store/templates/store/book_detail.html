@@ -1,0 +1,76 @@
+{% extends 'store/base.html' %}
+{% load static %}
+
+{% block title %}{{ book.title }} - Bookstore{% endblock %}
+
+{% block content %}
+<div class="row mt-4">
+    <div class="col-md-4">
+        {# --- UPDATE IMAGE DISPLAY --- #}
+        {% if book.cover_image and book.cover_image.url %}
+            <img src="{{ book.cover_image.url }}" class="img-fluid rounded shadow-sm mb-3" alt="{{ book.title }} Cover">
+        {% else %}
+            <img src="{% static 'images/placeholder_cover.png' %}" class="img-fluid rounded shadow-sm mb-3" alt="{{ book.title }} Cover">
+        {% endif %}
+        {# ---------------------------- #}
+    </div>
+    <div class="col-md-8">
+        <h1 class="display-5">{{ book.title }}</h1>
+        <p class="lead text-muted">by {{ book.author }}</p>
+        <hr>
+
+        <p class="fs-4"><strong>Price: ${{ book.price|floatformat:2 }}</strong></p>
+
+        <p>
+            {% if book.is_in_stock %}
+                <span class="badge bg-success fs-6">In Stock ({{ book.stock }} available)</span>
+            {% else %}
+                <span class="badge bg-danger fs-6">Out of Stock</span>
+            {% endif %}
+        </p>
+
+        <div class="mt-4">
+            <h4>Description</h4>
+            <p>{{ book.description|linebreaksbr|default:"No description provided." }}</p> {# Use linebreaksbr for formatting #}
+        </div>
+
+        <hr>
+
+        {# Add to Cart Form #}
+        {% if book.is_in_stock %}
+            <form action="{% url 'store:add_to_cart' %}" method="post" class="row g-3 align-items-center">
+                {% csrf_token %}
+                <input type="hidden" name="book_id" value="{{ book.id }}">
+                <div class="col-auto">
+                    <label for="quantity" class="col-form-label">Quantity:</label>
+                </div>
+                <div class="col-auto">
+                    <input type="number" name="quantity" id="quantity" value="1" min="1" max="{{ book.stock }}" class="form-control" style="width: 80px;" required>
+                </div>
+                <div class="col-auto">
+                    <button type="submit" class="btn btn-success">
+                         <span data-feather="shopping-cart" class="feather align-text-bottom"></span>
+                         Add to Cart
+                    </button>
+                </div>
+            </form>
+        {% else %}
+            <p class="text-muted">This book is currently unavailable.</p>
+        {% endif %}
+
+        <div class="mt-4">
+             <a href="{% url 'store:book_list' %}" class="btn btn-outline-secondary">
+                <span data-feather="arrow-left" class="feather align-text-bottom"></span>
+                Back to Book List
+            </a>
+        </div>
+
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+{# Load Feather Icons #}
+<script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+<script> try { feather.replace() } catch(e) {} </script>
+{% endblock %}

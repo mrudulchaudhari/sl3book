@@ -1,0 +1,67 @@
+{% extends 'admin_panel/admin_base.html' %}
+
+{% block title %}Book Management{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">Book Management</h1>
+    <div class="btn-toolbar mb-2 mb-md-0">
+        <div class="btn-group me-2">
+            <a href="{% url 'admin_panel:admin_book_add' %}" class="btn btn-sm btn-success">
+                <span data-feather="plus-circle" class="feather align-text-bottom"></span>
+                Add New Book
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="table-responsive">
+    <table class="table table-striped table-hover table-sm">
+        <thead>
+            <tr>
+                <th scope="col">ID</th>
+                <th scope="col">Title</th>
+                <th scope="col">Author</th>
+                <th scope="col" class="text-end">Price</th>
+                <th scope="col" class="text-center">Stock</th>
+                <th scope="col" class="text-center">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for book in books %}
+            <tr>
+                <td>{{ book.id }}</td>
+                <td>{{ book.title }}</td>
+                <td>{{ book.author }}</td>
+                <td class="text-end">${{ book.price|floatformat:2 }}</td>
+                <td class="text-center">{{ book.stock }}</td>
+                <td class="text-center">
+                    <a href="{% url 'admin_panel:admin_book_edit' book.id %}" class="btn btn-sm btn-primary me-1">
+                       <span data-feather="edit-2" class="feather align-text-bottom"></span>
+                       Edit
+                    </a>
+                    <a href="{% url 'admin_panel:admin_book_delete' book.id %}" class="btn btn-sm btn-danger">
+                        <span data-feather="trash-2" class="feather align-text-bottom"></span>
+                        Delete
+                     </a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="6" class="text-center fst-italic">No books found. Use the "Add New Book" button to add one.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  try {
+    feather.replace()
+  } catch(e) {
+      console.error("Feather icons initialization failed on book list", e);
+  }
+</script>
+{% endblock %}

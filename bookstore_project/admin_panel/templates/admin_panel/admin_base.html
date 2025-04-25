@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Admin Panel{% endblock %} - Bookstore</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/admin_style.css' %}"> {% block extra_head %}{% endblock %}
+    <style>
+      /* Basic sidebar styling */
+      .sidebar {
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        z-index: 100; /* Behind navbar */
+        padding: 48px 0 0; /* Height of navbar */
+        box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1);
+      }
+      @media (max-width: 767.98px) {
+        .sidebar {
+          top: 56px; /* Adjust for navbar height on small screens if needed */
+          padding: 0;
+        }
+      }
+      .sidebar-sticky {
+        position: relative;
+        top: 0;
+        height: calc(100vh - 48px); /* Adjust if navbar height changes */
+        padding-top: .5rem;
+        overflow-x: hidden;
+        overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
+      }
+      /* Feather icon sizing */
+      .feather {
+        width: 16px;
+        height: 16px;
+        vertical-align: text-bottom;
+      }
+    </style>
+</head>
+<body>
+    <header class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0 shadow">
+        <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3 fs-6" href="{% url 'admin_panel:dashboard' %}">Bookstore Admin</a>
+        <button class="navbar-toggler position-absolute d-md-none collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="navbar-nav ms-auto">
+            <div class="nav-item text-nowrap d-flex align-items-center">
+                 <span class="nav-link px-3 text-white">Admin: {{ user.username }}</span>
+                 <a class="nav-link px-3" href="{% url 'store:book_list' %}" target="_blank">View Site</a> <form action="{% url 'store:logout' %}" method="post" style="display: inline;">
+                     {% csrf_token %}
+                     <button type="submit" class="nav-link px-3 bg-dark border-0 text-white">Logout</button>
+                 </form>
+            </div>
+        </div>
+    </header>
+
+     <div class="container-fluid">
+        <div class="row">
+            <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
+                <div class="position-sticky pt-3 sidebar-sticky">
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}" aria-current="page" href="{% url 'admin_panel:dashboard' %}">
+                                <span data-feather="home" class="feather"></span>
+                                Dashboard
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if 'book' in request.resolver_match.view_name %}active{% endif %}" href="{% url 'admin_panel:admin_book_list' %}">
+                                <span data-feather="book-open" class="feather"></span>
+                                Manage Books
+                            </a>
+                        </li>
+                         <li class="nav-item">
+                            <a class="nav-link" href="#">
+                                <span data-feather="users" class="feather"></span>
+                                Manage Users
+                            </a>
+                        </li>
+                        </ul>
+                </div>
+            </nav>
+
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+                 {% block content %}
+                {% endblock %}
+            </main>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+    <script>
+      // Initialize Feather Icons
+      try {
+        feather.replace()
+      } catch(e) {
+        console.error("Feather icons initialization failed", e);
+      }
+    </script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

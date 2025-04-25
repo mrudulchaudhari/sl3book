@@ -1,0 +1,102 @@
+{% extends 'admin_panel/admin_base.html' %}
+{% load static %} 
+
+{% block title %}{{ form_title|default:"Book Form" }}{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">{{ form_title|default:"Manage Book" }}</h1>
+</div>
+
+
+{% if errors.general %}
+    <div class="alert alert-danger" role="alert">
+        {{ errors.general }}
+    </div>
+{% endif %}
+
+
+<form method="post" action="" novalidate enctype="multipart/form-data">
+    {% csrf_token %}
+
+    
+    <div class="mb-3">
+        <label for="title" class="form-label">Title <span class="text-danger">*</span></label>
+        <input type="text" class="form-control {% if errors.title %}is-invalid{% endif %}" id="title" name="title" value="{% firstof book_data.title book.title '' %}" required>
+        {% if errors.title %}<div class="invalid-feedback">{{ errors.title }}</div>{% endif %}
+    </div>
+
+    
+    <div class="mb-3">
+        <label for="author" class="form-label">Author <span class="text-danger">*</span></label>
+        <input type="text" class="form-control {% if errors.author %}is-invalid{% endif %}" id="author" name="author" value="{% firstof book_data.author book.author '' %}" required>
+        {% if errors.author %}<div class="invalid-feedback">{{ errors.author }}</div>{% endif %}
+    </div>
+
+    
+    <div class="mb-3">
+        <label for="description" class="form-label">Description</label>
+        <textarea class="form-control {% if errors.description %}is-invalid{% endif %}" id="description" name="description" rows="4">{% firstof book_data.description book.description '' %}</textarea>
+        {% if errors.description %}<div class="invalid-feedback">{{ errors.description }}</div>{% endif %}
+    </div>
+
+    
+    <div class="mb-3">
+        <label for="price" class="form-label">Price ($) <span class="text-danger">*</span></label>
+        <input type="number" class="form-control {% if errors.price %}is-invalid{% endif %}" id="price" name="price" step="0.01" min="0" value="{% firstof book_data.price book.price '' %}" required>
+        {% if errors.price %}<div class="invalid-feedback">{{ errors.price }}</div>{% endif %}
+    </div>
+
+    
+    <div class="mb-3">
+        <label for="stock" class="form-label">Stock <span class="text-danger">*</span></label>
+        <input type="number" class="form-control {% if errors.stock %}is-invalid{% endif %}" id="stock" name="stock" min="0" step="1" value="{% firstof book_data.stock book.stock '' %}" required>
+        {% if errors.stock %}<div class="invalid-feedback">{{ errors.stock }}</div>{% endif %}
+    </div>
+
+    
+    <div class="mb-3">
+        <label for="cover_image" class="form-label">Cover Image</label>
+
+        {% if book.cover_image %}
+            <div class="mb-2">
+                Current:
+                <a href="{{ book.cover_image.url }}" target="_blank">
+                    <img src="{{ book.cover_image.url }}" alt="Current Cover for {{ book.title }}" style="max-height: 100px; width: auto; border: 1px solid #ccc;">
+                </a>
+                
+                <div class="form-check mt-1">
+                    <input class="form-check-input" type="checkbox" name="clear_cover_image" id="clear_cover_image">
+                    <label class="form-check-label" for="clear_cover_image">
+                        Clear current image
+                    </label>
+                </div>
+            </div>
+             Change: <br> 
+        {% endif %}
+        <input type="file"
+               class="form-control {% if errors.cover_image %}is-invalid{% endif %}"
+               id="cover_image"
+               name="cover_image"
+               accept="image/*"> 
+         <small class="form-text text-muted">Upload a new image to replace the current one (if any).</small>
+        {% if errors.cover_image %}
+            <div class="invalid-feedback d-block"> 
+                {{ errors.cover_image }}
+            </div>
+        {% endif %}
+    </div>
+
+
+    <hr> 
+
+    <div class="d-flex justify-content-end">
+        <a href="{% url 'admin_panel:admin_book_list' %}" class="btn btn-secondary me-2">Cancel</a>
+        <button type="submit" class="btn btn-primary">
+            {% if book %}Update Book{% else %}Add Book{% endif %}
+        </button>
+    </div>
+
+</form>
+
+{% endblock %}

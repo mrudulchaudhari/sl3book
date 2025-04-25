@@ -1,0 +1,43 @@
+{% extends 'admin_panel/admin_base.html' %}
+
+{% block title %}Confirm Delete{% endblock %}
+
+{% block content %}
+<div class="pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">Confirm Deletion</h1>
+</div>
+
+<div class="alert alert-danger" role="alert">
+    <h4 class="alert-heading">Warning!</h4>
+    <p>Are you absolutely sure you want to delete the following book?</p>
+    <hr>
+    <p class="mb-0"><strong>Title:</strong> {{ book.title }}</p>
+    <p class="mb-0"><strong>Author:</strong> {{ book.author }}</p>
+    <p class="mt-2">This action cannot be undone.</p>
+</div>
+
+
+<form method="post" action="{% url 'admin_panel:admin_book_delete' book.id %}">
+    {% csrf_token %}
+    <div class="d-flex justify-content-start">
+        <button type="submit" class="btn btn-danger me-2">
+            <span data-feather="trash-2" class="feather align-text-bottom"></span>
+            Yes, Delete This Book
+        </button>
+        <a href="{% url 'admin_panel:admin_book_list' %}" class="btn btn-secondary">
+            <span data-feather="x-circle" class="feather align-text-bottom"></span>
+            Cancel
+        </a>
+    </div>
+</form>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  try {
+    feather.replace() 
+  } catch(e) {
+      console.error("Feather icons initialization failed on delete confirmation", e);
+  }
+</script>
+{% endblock %}
